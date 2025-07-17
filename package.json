@@ -10,7 +10,7 @@
     "watch": "tsc --watch",
     "reset": "rimraf output && rimraf temp",
     "test": "node dist/main.js",
-    "install": "npm run build"
+    "postinstall": "tsc"
   },
   "bin": {
     "make-unity-sdk": "./dist/main.js"
