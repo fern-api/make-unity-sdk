@@ -10,8 +10,7 @@
     "watch": "tsc --watch",
     "reset": "rimraf output && rimraf temp",
     "test": "node dist/main.js",
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix"
+    "install": "npm run build"
   },
   "dependencies": {
     "adm-zip": "^0.5.10",
