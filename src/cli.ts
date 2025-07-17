@@ -1,3 +1,5 @@
+import { resolve } from 'path';
+import { cwd } from 'process';
 import { exit } from './output';
 
 export function getValue(prefix: string) {
@@ -34,3 +36,8 @@ export const sln = getValue('--sln') || exit('No solution file provided (--sln <
 // --rebuild: forcibly rebuild the solution before running
 export const rebuild = process.argv.includes('--rebuild');
 
+// --target <outputPath> : The path to the output folder where the package contents will be laid out.
+export const targetFolder = resolve(cwd(), getValue('--target') || './output');
+
+// --package <packagePath> 
+export const packageParentFolder = resolve(cwd(), getValue('--package') || `${targetFolder}/..`);

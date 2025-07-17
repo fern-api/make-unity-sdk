@@ -95,9 +95,9 @@ guid: ${hash}
 
 }
 
-export async function packageViaNpm(packageFolder: string) {
+export async function packageViaNpm(packageFolder: string, targetLocation: string) {
   // package the folder via npm
-  const { stdout, stderr, exitCode } = await run('npm', 'pack', packageFolder);
+  const { stdout, stderr, exitCode } = await run('npm', 'pack', packageFolder, '--pack-destination', targetLocation);
   if (exitCode !== 0) {
     return exit(`✗ Failed to package via npm: \n${stdout}\n${stderr}`);
   }

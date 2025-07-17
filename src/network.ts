@@ -18,6 +18,7 @@ export async function downloadFile(url: string, target: string): Promise<void> {
 
     if (await fileExists(target)) {
       info(`  ✓ Downloaded ${target}`);
+      return;
     } else {
       throw new Error(`Failed to download ${filename}`);
     }

@@ -46,7 +46,7 @@ export async function unzip(zipPath: string, pattern: string, outputDir: string)
         try {
           const fileData = entry.getData();
           await writeFile(outputPath, fileData);
-          info(`  ✓ Extracted ${fileName}`);
+          info(`  ✓ Extracted '${outputPath}'`);
           extractedCount++;
         } catch (err) {
           error(`  ✗ Failed to extract ${fileName}:`, err);

@@ -30,16 +30,16 @@ npx @fern-api/make-unity-sdk --sln path/to/api-solution.sln
 --license <license>             # set the license of the package
 --changelog <changelog>         # set the changelog of the package
 --documentation <documentation> # set the documentation of the package
+
+--target <outputPath>           # The path to the output folder where the package contents will be laid out.
+                                # default: ./output
+--package <packagePath>         # The path to the folder where the .tgz package file will be placed.
+                                # default: ./output
 ```
-
-At the moment:
-  - it creates the package in the `./output` folder
-  - it creates the package in the `./<name>-<version>.tgz` file
-
 
 Example:
 ``` bash
-npx fern-api/make-unity-sdk --sln C:/fern/petstore-csharp/fern/.preview/fern-csharp-sdk/src/FernDemoApi.sln --company petstore  --clean --version 1.0.0   
+npx fern-api/make-unity-sdk --sln C:/fern/petstore-csharp/fern/.preview/fern-csharp-sdk/src/FernDemoApi.sln --company petstore --version 1.0.0 
 ``` 
 
 Should show something like:

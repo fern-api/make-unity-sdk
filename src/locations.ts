@@ -1,27 +1,28 @@
+import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
-import { sln } from './cli';
+import { sln, targetFolder } from './cli';
 import { barename } from './filesystem';
 import { exit } from './output';
 
 export const cwd = process.cwd();
 
-export const temp = resolve(cwd, './temp/');
+export const temp = resolve(tmpdir(), './make-unity-sdk/');
 export const nuget = resolve(temp, './nuget/');
 
-export const packageFolder = resolve(cwd, './output/');
-export const runtimeFolder = resolve(packageFolder, './Runtime/');
+
+export const runtimeFolder = resolve(targetFolder, './Runtime/');
 export const runtimeAsmDefFile = resolve(runtimeFolder, './Runtime.asmdef');
 export const internalAssemblyFolder = resolve(runtimeFolder, './Internal/');
 export const internalAsmDefFile = resolve(internalAssemblyFolder, './Internal.asmdef');
-export const packageJson = resolve(packageFolder, './package.json');
-export const readme = resolve(packageFolder, './README.md');
-export const license = resolve(packageFolder, './LICENSE');
-export const changelog = resolve(packageFolder, './CHANGELOG.md');
-export const editorFolder = resolve(packageFolder, './Editor/');
-export const testFolder = resolve(packageFolder, './Tests/');
-export const sampleFolder = resolve(packageFolder, './Samples~/');
-export const documentationFolder = resolve(packageFolder, './Documentation~/');
-export const notices = resolve(packageFolder, './Third Party Notices.md');
+export const packageJson = resolve(targetFolder, './package.json');
+export const readme = resolve(targetFolder, './README.md');
+export const license = resolve(targetFolder, './LICENSE');
+export const changelog = resolve(targetFolder, './CHANGELOG.md');
+export const editorFolder = resolve(targetFolder, './Editor/');
+export const testFolder = resolve(targetFolder, './Tests/');
+export const sampleFolder = resolve(targetFolder, './Samples~/');
+export const documentationFolder = resolve(targetFolder, './Documentation~/');
+export const notices = resolve(targetFolder, './Third Party Notices.md');
 
 // the build output should be in the <slnFolder>/<barename>/bin/release/netstandard2.0/
 const slnFolder = dirname(sln);

@@ -6,9 +6,9 @@ import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { assets } from './assets';
 import { buildSolution } from './build';
-import { clean, rebuild, reset, sln } from './cli';
+import { clean, packageParentFolder, rebuild, reset, sln, targetFolder } from './cli';
 import { copyFiles, deleteDirectory, directoryEmpty, directoryExists, ensureDirectoryExists, fileExists } from './filesystem';
-import { apiBinFolder, apiFolder, buildOutputFolder, changelog, internalAssemblyFolder, license, nuget, packageFolder, packageJson, readme, runtimeFolder, temp } from './locations';
+import { apiBinFolder, apiFolder, buildOutputFolder, changelog, internalAssemblyFolder, license, nuget, packageJson, readme, runtimeFolder, temp } from './locations';
 import { downloadFile } from './network';
 import { exit, info, log } from './output';
 import { createChangelog, createLicense, createMetaFiles, createPackageJson, createReadme, packageViaNpm } from './packaging';
@@ -20,7 +20,7 @@ async function main(): Promise<number | undefined> {
       log('> Cleaning up folders');
       await Promise.all([
         deleteDirectory(temp),
-        deleteDirectory(packageFolder),
+        deleteDirectory(targetFolder),
         deleteDirectory(apiBinFolder)
       ]);
     }
@@ -42,7 +42,7 @@ async function main(): Promise<number | undefined> {
     log('> Creating folder structure');
     await Promise.all([
       ensureDirectoryExists(temp),
-      ensureDirectoryExists(packageFolder),
+      ensureDirectoryExists(targetFolder),
       ensureDirectoryExists(nuget),
       ensureDirectoryExists(runtimeFolder),
       ensureDirectoryExists(internalAssemblyFolder)
@@ -101,11 +101,11 @@ async function main(): Promise<number | undefined> {
     // await createAsmDefFiles(internalDlls, runtimeDlls);
 
     // must be last step before creating the npm
-    await createMetaFiles(packageFolder);
+    await createMetaFiles(targetFolder);
 
     log('> creating .tgz package');
-    const { stderr } = await packageViaNpm(packageFolder);
-    const filename = stderr.match(/npm notice filename:\s+(\S+)/)?.[1];
+    const { stderr } = await packageViaNpm(targetFolder, packageParentFolder);
+    const filename = resolve(packageParentFolder, stderr.match(/npm notice filename:\s+(\S+)/)?.[1]!);
     info(`  ✓ Created '${filename}'`)
 
     log('> done.');
