@@ -16,7 +16,8 @@
     "make-unity-sdk": "./dist/main.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "dependencies": {
     "adm-zip": "^0.5.10",
