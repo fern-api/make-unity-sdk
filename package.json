@@ -12,6 +12,9 @@
     "test": "node dist/main.js",
     "install": "npm run build"
   },
+  "bin": {
+    "make-unity-sdk": "./dist/main.js"
+  },
   "dependencies": {
     "adm-zip": "^0.5.10",
     "source-map-support": "^0.5.21"
