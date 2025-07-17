@@ -1,0 +1,22 @@
+{
+  "cSpell.words": [
+    "asmdef",
+    "asyncinterfaces",
+    "barename",
+    "compilerservices",
+    "humeapi",
+    "netstandard"
+  ],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always",
+  },
+  "typescript.preferences.organizeImports": {
+    "enabled": true,
+    "importsOrder": [
+      "node:*",
+      "node",
+      "*"
+    ]
+  }
+}
