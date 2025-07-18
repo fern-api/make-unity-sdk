@@ -312,15 +312,15 @@ export async function verifyPackageFiles(folderPath: string) {
     if (await isTextFile(filePath)) {
       const content = await readFile(filePath, 'utf8');
       // get the placeholders in the file
-      const placeholders = content.match(/\$\{([^}]+)\}/g);
+      const placeholders = content.match(/\$\{([^}]+?)\}/g);
       if (placeholders) {
         for (const placeholder of placeholders) {
           const key = placeholder.slice(2, -1);
-          if (!packageMetadata[key] && !metadata[key]) {
-            error(`  ${red('✗')} Unresolved placeholder '${red(bold(placeholder))}' found in '${cyan(filePath)}'`);
-            info(`     use ${green`--${key} <value>`} to set it.`);
-          }
+
+          error(`  ${red('✗')} Unresolved placeholder '${red(bold(placeholder))}' found in '${cyan(filePath)}'`);
+          info(`     use ${green`--${key} <value>`} to set it.`);
         }
+
       }
     }
   }
