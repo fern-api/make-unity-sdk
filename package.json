@@ -21,7 +21,8 @@
     "package.json",
     "README.md",
     "LICENSE",
-    "tsconfig.json"
+    "tsconfig.json",
+    "resources"
   ],
   "dependencies": {
     "adm-zip": "^0.5.10",

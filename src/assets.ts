@@ -1,4 +1,24 @@
-// Assets for inclusion in the Unity package
+/**
+ * Array of NuGet package assets to be included in the Unity package.
+ * 
+ * Each asset represents a NuGet package that will be downloaded and extracted
+ * into the Unity package. The assets include essential .NET libraries that
+ * provide functionality for async operations, JSON handling, memory management,
+ * and other core features needed by the Unity SDK.
+ * 
+ * @example
+ * ```typescript
+ * // Example asset structure:
+ * {
+ *   name: 'Package.Name',
+ *   origin: 'https://www.nuget.org/packages/Package.Name/1.0.0',
+ *   packageUrl: 'https://www.nuget.org/api/v2/package/package.name/1.0.0',
+ *   filename: 'package.name.1.0.0.nupkg',
+ *   files: 'lib/netstandard2.0/*',
+ *   license: "MIT"
+ * }
+ * ```
+ */
 export const assets = [
   {
     name: 'Microsoft.Bcl.AsyncInterfaces',
@@ -32,7 +52,7 @@ export const assets = [
     files: 'lib/netstandard2.0/*',
     license: "MIT",
   },
-  { 
+  {
     name: 'System.IO.Pipelines',
     origin: 'https://www.nuget.org/packages/System.IO.Pipelines/10.0.0-preview.6.25358.103',
     packageUrl: 'https://www.nuget.org/api/v2/package/system.io.pipelines/10.0.0-preview.6.25358.103',

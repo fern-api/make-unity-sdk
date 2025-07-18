@@ -4,8 +4,14 @@
     "asyncinterfaces",
     "barename",
     "compilerservices",
+    "datetimeonly",
+    "ferndemoapi",
     "humeapi",
-    "netstandard"
+    "mycompany",
+    "mypackage",
+    "netstandard",
+    "openupm",
+    "petstore"
   ],
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {

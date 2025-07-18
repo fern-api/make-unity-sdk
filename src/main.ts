@@ -6,21 +6,53 @@ import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { assets } from './assets';
 import { buildSolution } from './build';
-import { clean, packageParentFolder, rebuild, reset, sln, targetFolder } from './cli';
+import { clean, packageFolder, packageParentFolder, rebuild, reset, showHelp, solutionFile } from './cli';
 import { copyFiles, deleteDirectory, directoryEmpty, directoryExists, ensureDirectoryExists, fileExists } from './filesystem';
-import { apiBinFolder, apiFolder, buildOutputFolder, changelog, internalAssemblyFolder, license, nuget, packageJson, readme, runtimeFolder, temp } from './locations';
+import { apiBinFolder, apiFolder, buildOutputFolder, changelog, internalAssemblyFolder, license, nuget, packageJson, runtimeFolder, temp } from './locations';
 import { downloadFile } from './network';
-import { exit, info, log } from './output';
-import { createChangelog, createLicense, createMetaFiles, createPackageJson, createReadme, packageViaNpm } from './packaging';
+import { check, errorCount, exit, info, log } from './output';
+import { createChangelog, createLicense, createMetaFiles, createPackageJson, packageViaNpm, updateResources, verifyPackageFiles } from './packaging';
 import { unzip } from './unpack';
 
+/**
+ * Main entry point for the Unity SDK package creation tool.
+ * 
+ * This function orchestrates the entire process of creating a Unity package from a .NET solution:
+ * 1. Cleans up directories if requested
+ * 2. Builds the .NET solution
+ * 3. Downloads and extracts NuGet dependencies
+ * 4. Creates Unity package structure and metadata
+ * 5. Packages the result as a .tgz file
+ * 
+ * @returns A Promise that resolves to a number (exit code) or undefined
+ * @throws {Error} If any step in the process fails
+ * 
+ * @example
+ * ```typescript
+ * // Run the main process
+ * main().then(exitCode => {
+ *   if (exitCode === 0) {
+ *     console.log('Package created successfully');
+ *   } else {
+ *     console.error('Package creation failed');
+ *   }
+ * });
+ * ```
+ */
 async function main(): Promise<number | undefined> {
   try {
+    // Check for help flags
+    if (process.argv.includes('--help') || process.argv.includes('-h')) {
+      const showDetailed = process.argv.includes('--detailed');
+      showHelp(showDetailed);
+      return 0;
+    }
+
     if (clean || reset) {
       log('> Cleaning up folders');
       await Promise.all([
         deleteDirectory(temp),
-        deleteDirectory(targetFolder),
+        deleteDirectory(packageFolder),
         deleteDirectory(apiBinFolder)
       ]);
     }
@@ -30,19 +62,19 @@ async function main(): Promise<number | undefined> {
       return;
     }
 
-    if (!sln) {
+    if (!solutionFile) {
       return exit('No solution file provided');
     }
 
-    if (!await fileExists(sln)) {
-      return exit(`Solution file '${sln}' does not exist`);
+    if (!await fileExists(solutionFile)) {
+      return exit(`Solution file '${solutionFile}' does not exist`);
     }
 
     // create required directories
     log('> Creating folder structure');
     await Promise.all([
       ensureDirectoryExists(temp),
-      ensureDirectoryExists(targetFolder),
+      ensureDirectoryExists(packageFolder),
       ensureDirectoryExists(nuget),
       ensureDirectoryExists(runtimeFolder),
       ensureDirectoryExists(internalAssemblyFolder)
@@ -50,7 +82,7 @@ async function main(): Promise<number | undefined> {
 
     log('> Building solution');
     if (rebuild || await directoryEmpty(buildOutputFolder)) {
-      const { stdout, stderr, exitCode } = await buildSolution(sln);
+      const { stdout, stderr, exitCode } = await buildSolution(solutionFile);
       if (exitCode !== 0) {
         return exit(`✗ Failed to build solution: \n${stdout}\n${stderr}`);
       }
@@ -88,7 +120,7 @@ async function main(): Promise<number | undefined> {
 
     log('> Creating required package assets');
     await createPackageJson(packageJson);
-    await createReadme(readme);
+    await updateResources(resolve(__dirname, '..', 'resources'), packageFolder);
     await createLicense(license);
     await createChangelog(changelog);
 
@@ -101,12 +133,20 @@ async function main(): Promise<number | undefined> {
     // await createAsmDefFiles(internalDlls, runtimeDlls);
 
     // must be last step before creating the npm
-    await createMetaFiles(targetFolder);
+    await createMetaFiles(packageFolder);
+
+    log('> verifying package contents');
+
+    await verifyPackageFiles(packageFolder);
+
+    if (errorCount > 0) {
+      exit("Errors encountered, package not created.");
+    }
 
     log('> creating .tgz package');
-    const { stderr } = await packageViaNpm(targetFolder, packageParentFolder);
+    const { stderr } = await packageViaNpm(packageFolder, packageParentFolder);
     const filename = resolve(packageParentFolder, stderr.match(/npm notice filename:\s+(\S+)/)?.[1]!);
-    info(`  ✓ Created '${filename}'`)
+    info(`  ${check} Created '${filename}'`)
 
     log('> done.');
   } catch (err) {
