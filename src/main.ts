@@ -4,11 +4,13 @@ import 'source-map-support/register';
 
 import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { green } from './ansi';
 import { assets } from './assets';
 import { buildSolution } from './build';
 import { clean, packageFolder, packageParentFolder, rebuild, reset, showHelp, solutionFile } from './cli';
 import { copyFiles, deleteDirectory, directoryEmpty, directoryExists, ensureDirectoryExists, fileExists } from './filesystem';
 import { apiBinFolder, apiFolder, buildOutputFolder, changelog, internalAssemblyFolder, license, nuget, packageJson, runtimeFolder, temp } from './locations';
+import { initPackageMetadata, packageMetadata } from './metadata';
 import { downloadFile } from './network';
 import { check, errorCount, exit, info, log } from './output';
 import { createChangelog, createLicense, createMetaFiles, createPackageJson, packageViaNpm, updateResources, verifyPackageFiles } from './packaging';
@@ -65,6 +67,8 @@ async function main(): Promise<number | undefined> {
     if (!solutionFile) {
       return exit('No solution file provided');
     }
+    // since we have a solution, we should be able to find the package project, and harvest some metadata
+    await initPackageMetadata();
 
     if (!await fileExists(solutionFile)) {
       return exit(`Solution file '${solutionFile}' does not exist`);
@@ -147,7 +151,7 @@ async function main(): Promise<number | undefined> {
     const { stderr } = await packageViaNpm(packageFolder, packageParentFolder);
     const filename = resolve(packageParentFolder, stderr.match(/npm notice filename:\s+(\S+)/)?.[1]!);
     info(`  ${check} Created '${filename}'`)
-
+    log(`> UPMVERSION: ${green(packageMetadata.version)}`);
     log('> done.');
   } catch (err) {
     return exit(`${err}`);

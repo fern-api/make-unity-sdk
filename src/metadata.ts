@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
+import { getSDKProperties } from './build';
 import { clean, metadata, solutionFile } from './cli';
 import { barename } from './filesystem';
 import { packageJson } from './locations';
@@ -71,20 +72,65 @@ function loadPackageJson(packageJsonPath: string) {
  * The metadata includes standard Unity package fields like name, version,
  * company, displayName, description, author, license, and URLs.
  */
-export const packageMetadata = trim({
-  ...loadPackageJson(packageJson),
-  ...trim({
-    name: metadata.name,
-    version: metadata.version,
+export let packageMetadata: Record<string, any> = {};
 
-    company: metadata.company,
-    displayName: metadata.displayName,
-    description: metadata.description,
+/**
+ * Initializes and populates the package metadata by merging multiple sources.
+ * 
+ * This function orchestrates the creation of the final package metadata by:
+ * 1. Extracting SDK properties from the .NET solution (version, project info)
+ * 2. Loading existing package.json file (if it exists and --clean is not set)
+ * 3. Merging command line arguments that override file values
+ * 4. Applying default values for missing fields
+ * 5. Cleaning up undefined properties
+ * 
+ * The function prioritizes values in this order:
+ * 1. Command line arguments (highest priority)
+ * 2. SDK properties from .csproj file (for version)
+ * 3. Existing package.json file values
+ * 4. Default placeholder values (lowest priority)
+ * 
+ * @returns A Promise that resolves when the package metadata has been initialized
+ * @throws {Error} If the SDK properties cannot be extracted from the solution file
+ * 
+ * @example
+ * ```typescript
+ * try {
+ *   await initPackageMetadata();
+ *   console.log('Package name:', packageMetadata.name);
+ *   console.log('Version:', packageMetadata.version);
+ *   console.log('Company:', packageMetadata.company);
+ * } catch (error) {
+ *   console.error('Failed to initialize package metadata:', error.message);
+ * }
+ * ```
+ */
+export async function initPackageMetadata() {
+  // Extract SDK properties from the .NET solution file
+  // This provides version information and validates the solution structure
+  const sdkProperties = await getSDKProperties(solutionFile);
 
-    author: metadata.author,
-    license: metadata.license,
-    changelogUrl: metadata.changelogUrl,
-    documentationUrl: metadata.documentationUrl,
-  })
-});
+  // Merge all metadata sources with proper precedence
+  packageMetadata = trim({
+    // Start with existing package.json file (if it exists and --clean is not set)
+    ...loadPackageJson(packageJson),
+
+    // Override with command line arguments and SDK properties
+    ...trim({
+      name: metadata.name,
+      // the version will be always overridden with the command line or what is in the SDK .csproj file.
+      version: metadata.version || sdkProperties.version,
+
+      company: metadata.company,
+      displayName: metadata.displayName,
+      description: metadata.description,
+
+      author: metadata.author,
+      license: metadata.license,
+      changelogUrl: metadata.changelogUrl,
+      documentationUrl: metadata.documentationUrl,
+    })
+  });
+}
+
 
