@@ -99,7 +99,7 @@ export const documentationFolder = resolve(packageFolder, './Documentation~/');
  */
 export const notices = resolve(packageFolder, './Third Party Notices.md');
 
-// the build output should be in the <slnFolder>/<barename>/bin/release/netstandard2.0/
+// the build output should be in the <slnFolder>/<barename>/bin/Release/netstandard2.0/
 const slnFolder = dirname(solutionFile);
 const apiName = barename(solutionFile);
 if (!apiName) {
@@ -120,6 +120,6 @@ export const apiBinFolder = resolve(apiFolder, 'bin');
 
 /**
  * The final build output folder for the .NET API.
- * Contains the release build targeting .NET Standard 2.0.
+ * Contains the Release build targeting .NET Standard 2.0.
  */
-export const buildOutputFolder = resolve(apiBinFolder, 'release', 'netstandard2.0');
+export const buildOutputFolder = resolve(apiBinFolder, 'Release', 'netstandard2.0');

@@ -2,9 +2,9 @@ import { resolve } from 'node:path';
 import { run } from './automation';
 
 /**
- * Builds a .NET solution using the dotnet CLI with release configuration.
+ * Builds a .NET solution using the dotnet CLI with Release configuration.
  * 
- * This function executes `dotnet build -c release` on the specified solution file.
+ * This function executes `dotnet build -c Release` on the specified solution file.
  * It throws an error if the build fails, providing the stderr output for debugging.
  * 
  * @param slnPath - The path to the .NET solution file (.sln) to build
@@ -22,7 +22,7 @@ import { run } from './automation';
  * ```
  */
 export async function buildSolution(slnPath: string) {
-  const result = await run('dotnet', 'build', '-c', 'release', slnPath);
+  const result = await run('dotnet', 'build', '-c', 'Release', slnPath);
   if (result.exitCode !== 0) {
     throw new Error(`Failed to build solution: ${result.stderr}`);
   }

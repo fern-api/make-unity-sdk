@@ -12,7 +12,7 @@ import { copyFiles, deleteDirectory, directoryEmpty, directoryExists, ensureDire
 import { apiBinFolder, apiFolder, buildOutputFolder, changelog, internalAssemblyFolder, license, nuget, packageJson, runtimeFolder, temp } from './locations';
 import { initPackageMetadata, packageMetadata } from './metadata';
 import { downloadFile } from './network';
-import { check, errorCount, exit, info, log } from './output';
+import { errorCount, exit, log } from './output';
 import { createChangelog, createLicense, createMetaFiles, createPackageJson, packageViaNpm, updateResources, verifyPackageFiles } from './packaging';
 import { unzip } from './unpack';
 
@@ -92,7 +92,6 @@ async function main(): Promise<number | undefined> {
       }
     }
 
-
     if (!await directoryExists(apiFolder)) {
       return exit(`Failed to find API folder: '${apiFolder}'`);
     }
@@ -150,8 +149,8 @@ async function main(): Promise<number | undefined> {
     log('> creating .tgz package');
     const { stderr } = await packageViaNpm(packageFolder, packageParentFolder);
     const filename = resolve(packageParentFolder, stderr.match(/npm notice filename:\s+(\S+)/)?.[1]!);
-    info(`  ${check} Created '${filename}'`)
-    log(`> UPMVERSION: ${green(packageMetadata.version)}`);
+    log(`> Created package: ${green(filename)}`)
+    log(`> UPM Version: ${green(packageMetadata.version)}`);
     log('> done.');
   } catch (err) {
     return exit(`${err}`);

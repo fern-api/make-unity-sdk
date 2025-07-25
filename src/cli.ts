@@ -135,7 +135,7 @@ export function showHelp(showDetailed: boolean = false) {
   console.log(`    node main.js --reset\n`);
 
   console.log(bold`\nWORKFLOW:`);
-  console.log(`  1. Builds the .NET solution using 'dotnet build -c release'`);
+  console.log(`  1. Builds the .NET solution using 'dotnet build -c Release'`);
   console.log(`  2. Downloads required NuGet packages from the assets list`);
   console.log(`  3. Extracts specific files from NuGet packages to Internal/ folder`);
   console.log(`  4. Copies build output to Runtime/ folder`);
