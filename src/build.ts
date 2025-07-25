@@ -22,7 +22,7 @@ import { run } from './automation';
  * ```
  */
 export async function buildSolution(slnPath: string) {
-  const result = await run('dotnet', 'build', '-c', 'Release', '--framework', 'netstandard2.0', slnPath);
+  const result = await run('dotnet', 'build', '-c', 'Release', slnPath);
   if (result.exitCode !== 0) {
     throw new Error(`Failed to build solution: ${result.stderr}`);
   }
